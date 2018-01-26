@@ -120,7 +120,7 @@ $ ./mvnw clean package
 $ java -jar target/trade-bot.jar
 ----
 
-IMPORTANT: Bye default the application will be running in the port 8081.
+IMPORTANT: By default the application will be running in the port 8081.
 
 If executed as is it will be dependent to the external API to be available in localhost:8080. Check the <<Profiles>> section
 to run it pointing to an external API.
