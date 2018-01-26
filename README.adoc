@@ -53,7 +53,7 @@ to override its properties in few ways.
  * Editing application properties file +
  It's possible to override the properties by editing the link:src/main/resources/application-yml[application.yml] file.
 
- IMPORTANT: After editing the properties file it's necessary to <<Build & Run,build>> the application before run it.
+IMPORTANT: After editing the properties file it's necessary to <<Build & Run,build>> the application before run it.
 
 [TIP]
 ====
