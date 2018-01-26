@@ -137,14 +137,14 @@ TradeBot is released under the non-restrictive Apache 2.0 license, and follows a
 process, using Github tracker for issues and merging pull requests into master.
 If you want to contribute even something trivial please do not hesitate, but follow the guidelines below.
 
-=== Adding Project Lombok Agent
+=== Code of Conduct
+This project adheres to the Contributor Covenant link:./docs/code-of-conduct.adoc[code of conduct].
+By participating, you are expected to uphold this code. Please report unacceptable behavior to marcos.hgb@gmail.com.
+
+== Adding Project Lombok Agent
 This project uses link:http://projectlombok.org/features/index.html[Project Lombok]
 to generate getters and setters etc. Compiling from the command line this
 shouldn't cause any problems, but in an IDE you need to add an agent
 to the JVM. Full instructions can be found in the Lombok website. The
 sign that you need to do this is a lot of compiler errors to do with
 missing methods and fields.
-
-=== Code of Conduct
-This project adheres to the Contributor Covenant link:./docs/code-of-conduct.adoc[code of conduct].
-By participating, you are expected to uphold this code. Please report unacceptable behavior to marcos.hgb@gmail.com.
