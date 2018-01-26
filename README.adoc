@@ -7,7 +7,7 @@ Marcos Barbero <marcos.hgb@gmail.com>
 This application is a simple bot implementation to perform some trading operations. If you are really anxious to run the
 application just skip everything and jump to the <<Build & Run>> section.
 
-== Architecture and Design
+== Architecture & Design
 This section describes this project architecture and design.
 
 === Technology Stack & Requirements
