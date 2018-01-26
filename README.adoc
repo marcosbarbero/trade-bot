@@ -128,7 +128,9 @@ to run it pointing to an external API.
 == Further improvements
 Here's some further improvements to be added in this project
 
- * Possibility to configure multiple products for quoting, buying and sell
+ * Possibility to configure multiple products to quote, buy and sell
+ * WebUI to configure the given properties values instead of a standalone running bot
+ * WebSocket notifications feed endpoint to notify when a trade action occurs
 
 == Contributing
 TradeBot is released under the non-restrictive Apache 2.0 license, and follows a very standard Github development
