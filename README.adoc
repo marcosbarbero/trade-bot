@@ -125,6 +125,14 @@ IMPORTANT: By default the application will be running in the port 8081.
 If executed as is it will be dependent to the external API to be available in localhost:8080. Check the <<Profiles>> section
 to run it pointing to an external API.
 
+=== Adding Project Lombok Agent
+This project uses link:http://projectlombok.org/features/index.html[Project Lombok]
+to generate getters and setters etc. Compiling from the command line this
+shouldn't cause any problems, but in an IDE you need to add an agent
+to the JVM. Full instructions can be found in the Lombok website. The
+sign that you need to do this is a lot of compiler errors to do with
+missing methods and fields.
+
 == Further improvements
 Here's some further improvements to be added in this project
 
@@ -140,11 +148,3 @@ If you want to contribute even something trivial please do not hesitate, but fol
 === Code of Conduct
 This project adheres to the Contributor Covenant link:./docs/code-of-conduct.adoc[code of conduct].
 By participating, you are expected to uphold this code. Please report unacceptable behavior to marcos.hgb@gmail.com.
-
-== Adding Project Lombok Agent
-This project uses link:http://projectlombok.org/features/index.html[Project Lombok]
-to generate getters and setters etc. Compiling from the command line this
-shouldn't cause any problems, but in an IDE you need to add an agent
-to the JVM. Full instructions can be found in the Lombok website. The
-sign that you need to do this is a lot of compiler errors to do with
-missing methods and fields.
