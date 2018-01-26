@@ -10,7 +10,7 @@ application just skip everything and jump to the <<Build & Run>> section.
 == Architecture and Design
 This section describes this project architecture and design.
 
-=== Technology
+=== Technology Stack & Requirements
 
  * link:http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html[Java 8]
  * link:https://projects.spring.io/spring-boot/[Spring Boot]
@@ -73,7 +73,7 @@ to override its properties in few ways.
  * Command line args +
  It's possible to override the properties in the command line application startup just adding the following arguments
 
- $ java -jar app.jar --trade.api.product-id=$productId --trade.api.buy-price=$buyPrice --trade.api.sell-price.lower-limit=$lowerLimit --trade.api.sell-price.upper-limit=$upperLimit
+ $ java -jar /path/to/trade-bot.jar --trade.api.product-id=$productId --trade.api.buy-price=$buyPrice --trade.api.sell-price.lower-limit=$lowerLimit --trade.api.sell-price.upper-limit=$upperLimit
  
  * Editing application properties file +
  It's possible to override the properties by editing the link:src/main/resources/application-yml[application.yml] file.
@@ -96,7 +96,7 @@ Currently there are two available profiles in the application:
  ** Calls the API in the beta environment provided
  ** To use beta profile add the following command line argument +
  
- $ java -jar app.jar --spring.profiles.active=beta
+ $ java -jar /path/to/trade-bot.jar --spring.profiles.active=beta
 
 [TIP]
 ====
@@ -105,6 +105,25 @@ for more details about profiles
 ====
 
 == Build & Run
+This section describes how to build and run the application.
+Run the following commands in the root folder of the project.
+
+.Build
+[source,bash]
+====
+$ ./mvnw clean package
+====
+
+.Run
+[source,bash]
+====
+$ java -jar target/trade-bot.jar
+====
+
+IMPORTANT: Bye default the application will be running in the port 8081.
+
+If executed as is it will be dependent to the external API to be available in localhost:8080. Check the <<Profiles>> section
+to run it pointing to an external API.
 
 == Further improvements
 Here's some further improvements to be added in this project
@@ -112,12 +131,12 @@ Here's some further improvements to be added in this project
  * Possibility to configure multiple products for quoting, buying and sell
 
 == Contributing
-TradeBot is released under the non-restrictive Apache 2.0 license, and follows a very
-standard Github development process, using Github tracker for issues and merging pull requests into master.
+TradeBot is released under the non-restrictive Apache 2.0 license, and follows a very standard Github development
+process, using Github tracker for issues and merging pull requests into master.
 If you want to contribute even something trivial please do not hesitate, but follow the guidelines below.
 
 === Adding Project Lombok Agent
-This project uses http://projectlombok.org/features/index.html[Project Lombok]
+This project uses link:http://projectlombok.org/features/index.html[Project Lombok]
 to generate getters and setters etc. Compiling from the command line this
 shouldn't cause any problems, but in an IDE you need to add an agent
 to the JVM. Full instructions can be found in the Lombok website. The
