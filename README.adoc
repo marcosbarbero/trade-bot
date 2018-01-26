@@ -1,0 +1,118 @@
+= Trade Bot
+Marcos Barbero <marcos.hgb@gmail.com>
+:toc:
+:summary: Simple bot implementation to perform some trading operations.
+
+== Architecture and Design
+
+
+=== Configuration properties
+The current implementation favors convention over configuration and is designed to get you up and running as quickly
+as possible
+
+.Externalized configuration properties
+[source,yaml]
+----
+trade:
+  api:
+    endpoints:
+      subscription: ws://localhost:8080/subscriptions/me  // <1>
+      buy-order: http://localhost:8080/core/16/users/me/trades  // <2>
+      sell-order: http://localhost:8080/core/16/users/me/portfolio/positions/  // <3>
+    product-id: sb26493  // <4>
+    buy-price: 11513.6  // <5>
+    sell-price:
+      lower-limit: 11500.6  // <6>
+      upper-limit: 11553.6  // <7>
+    headers:  // <8>
+      Accept-Language: nl-NL,en;q=0.8
+      Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyZWZyZXNoYWJsZSI6ZmFsc2UsInN1YiI6ImJiMGNkYTJiLWExMGUtNGVkMy1hZDVhLTBmODJiNGMxNTJjNCIsImF1ZCI6ImJldGEuZ2V0YnV4LmNvbSIsInNjcCI6WyJhcHA6bG9naW4iLCJydGY6bG9naW4iXSwiZXhwIjoxODIwODQ5Mjc5LCJpYXQiOjE1MDU0ODkyNzksImp0aSI6ImI3MzlmYjgwLTM1NzUtNGIwMS04NzUxLTMzZDFhNGRjOGY5MiIsImNpZCI6Ijg0NzM2MjI5MzkifQ.M5oANIi2nBtSfIfhyUMqJnex-JYg6Sm92KPYaUL9GKg
+      Content-Type: application/json
+      Accept: application/json
+----
+<1> WebSocket real-time feed subscription endpoint
+<2> The endpoint to buy order (Make a Trade)
+<3> The endpoint to sell order (Close Position)
+<4> The product id to quote
+<5> The buy price
+<6> The lower limit price to sell
+<7> The upper limit price to sell
+<8> Map containing default HTTP Headers to be sent in all requests
+
+
+==== Overriding default configuration properties
+This section describes how to override this application properties.
+As this application is built using link:https://projects.spring.io/spring-boot/[Spring Boot] given us the possibility
+to override its properties in few ways.
+
+ * Command line args
+ +
+ --
+ It's possible to override the properties in the command line application startup just adding the following arguments
+
+ [source,bash]
+ ----
+ $ java -jar app.jar --trade.api.product-id=$productId --trade.api.buy-price=$buyPrice --trade.api.sell-price.lower-limit=$lowerLimit --trade.api.sell-price.upper-limit=$upperLimit
+ ----
+ --
+ * Editing application properties file
+ +
+ --
+ It's possible to override the properties by editing the link:src/main/resources/application-yml[application.yml] file.
+
+ IMPORTANT: After editing the properties file it's necessary to <<Build & Run,build>> the application before run it.
+ --
+
+[TIP]
+====
+Check link:https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html[spring-boot documentation]
+for more details about externalizing configuration.
+====
+
+==== Profiles
+Currently there are two available profiles in the application:
+
+ * Default
+ ** Calls the API in localhost
+ ** There's no need to add any argument to run using the default profile
+ * Beta
+ ** Calls the API in the beta environment provided
+ ** To use beta profile add the following command line argument
+ +
+ --
+ [source,bash]
+ ----
+ $ java -jar app.jar --spring.profiles.active=beta
+ ----
+ --
+
+[TIP]
+====
+Check link:https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-profiles.html[spring boot documentation]
+for more details about profiles
+====
+
+== Build & Run
+
+== Further improvements
+Here's some further improvements to be added in this project
+
+ * Possibility to configure multiple products for quoting, buying and sell
+ *
+
+== Contributing
+TradeBot is released under the non-restrictive Apache 2.0 license, and follows a very
+standard Github development process, using Github tracker for issues and merging pull requests into master.
+If you want to contribute even something trivial please do not hesitate, but follow the guidelines below.
+
+=== Adding Project Lombok Agent
+This project uses http://projectlombok.org/features/index.html[Project Lombok]
+to generate getters and setters etc. Compiling from the command line this
+shouldn't cause any problems, but in an IDE you need to add an agent
+to the JVM. Full instructions can be found in the Lombok website. The
+sign that you need to do this is a lot of compiler errors to do with
+missing methods and fields.
+
+=== Code of Conduct
+This project adheres to the Contributor Covenant link:./docs/code-of-conduct.adoc[code of conduct].
+By participating, you are expected to uphold this code. Please report unacceptable behavior to marcos.hgb@gmail.com.

@@ -1,0 +1,6 @@
+# Configuration for Dev profile
+
+trade:
+  api:
+    env: dev
+    domain: https://api.{bux.api.env}.getbux.com

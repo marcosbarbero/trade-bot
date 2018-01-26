@@ -1,0 +1,10 @@
+# Configuration for Beta profile
+
+trade:
+  api:
+    env: beta
+    domain: https://api.{bux.api.env}.getbux.com
+    endpoints:
+     subscription: wss://rtf.beta.getbux.com/subscriptions/me
+     buy-order: https://api.beta.getbux.com/core/16/users/me/trades
+     sell-order: https://api.beta.getbux.com/core/16/users/me/portfolio/positions/
