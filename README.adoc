@@ -4,7 +4,29 @@ Marcos Barbero <marcos.hgb@gmail.com>
 :summary: Simple bot implementation to perform some trading operations.
 
 == Architecture and Design
+This section describes this project architecture and design.
 
+=== Technology
+
+ * link:http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html[Java 8]
+ * link:https://projects.spring.io/spring-boot/[Spring Boot]
+ * link:http://projectlombok.org/features/index.html[Project Lombok]
+ * link:https://maven.apache.org[Maven]
+
+=== Packages
+
+.Packages structure and content
+[source,yaml]
+----
+com.marcosbarbero.tradebot // <1>
+com.marcosbarbero.tradeboot.config // <2>
+com.marcosbarbero.tradebot.model // <3>
+com.marcosbarbero.tradebot.service // <4>
+----
+<1> Root package stores the StartUp class
+<2> Configuration files for the WebSocket connection and HTTP REST calls
+<3> All the data model used in the application such as WebSocket response as well as the REST API response.
+<4> Services and Handlers that execute the trading operations.
 
 === Configuration properties
 The current implementation favors convention over configuration and is designed to get you up and running as quickly
@@ -38,7 +60,6 @@ trade:
 <6> The lower limit price to sell
 <7> The upper limit price to sell
 <8> Map containing default HTTP Headers to be sent in all requests
-
 
 ==== Overriding default configuration properties
 This section describes how to override this application properties.
@@ -85,7 +106,6 @@ for more details about profiles
 Here's some further improvements to be added in this project
 
  * Possibility to configure multiple products for quoting, buying and sell
- *
 
 == Contributing
 TradeBot is released under the non-restrictive Apache 2.0 license, and follows a very
