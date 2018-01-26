@@ -45,23 +45,15 @@ This section describes how to override this application properties.
 As this application is built using link:https://projects.spring.io/spring-boot/[Spring Boot] given us the possibility
 to override its properties in few ways.
 
- * Command line args
- +
- --
+ * Command line args +
  It's possible to override the properties in the command line application startup just adding the following arguments
 
- [source,bash]
- ----
  $ java -jar app.jar --trade.api.product-id=$productId --trade.api.buy-price=$buyPrice --trade.api.sell-price.lower-limit=$lowerLimit --trade.api.sell-price.upper-limit=$upperLimit
- ----
- --
- * Editing application properties file
- +
- --
+ 
+ * Editing application properties file +
  It's possible to override the properties by editing the link:src/main/resources/application-yml[application.yml] file.
 
  IMPORTANT: After editing the properties file it's necessary to <<Build & Run,build>> the application before run it.
- --
 
 [TIP]
 ====
