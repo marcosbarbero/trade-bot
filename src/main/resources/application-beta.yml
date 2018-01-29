@@ -5,4 +5,4 @@ trade:
     endpoints:
       subscription: wss://rtf.beta.getbux.com/subscriptions/me
       buy-order: https://api.beta.getbux.com/core/16/users/me/trades
-      sell-order: https://api.beta.getbux.com/core/16/users/me/portfolio/positions/
+      sell-order: https://api.beta.getbux.com/core/16/users/me/portfolio/positions/{positionId}

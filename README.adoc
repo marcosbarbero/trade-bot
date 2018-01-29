@@ -46,7 +46,7 @@ trade:
     endpoints:
       subscription: ws://localhost:8080/subscriptions/me  // <1>
       buy-order: http://localhost:8080/core/16/users/me/trades  // <2>
-      sell-order: http://localhost:8080/core/16/users/me/portfolio/positions/  // <3>
+      sell-order: http://localhost:8080/core/16/users/me/portfolio/positions/{positionId}  // <3>
     product-id: sb26493  // <4>
     buy-price: 11513.6  // <5>
     sell-price:
