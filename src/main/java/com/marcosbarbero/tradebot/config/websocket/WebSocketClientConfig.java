@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 the original author or authors.
+ * Copyright 2012-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,11 +40,6 @@ import java.util.Map;
 public class WebSocketClientConfig {
 
     @Bean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper();
-    }
-
-    @Bean
     public WebSocketClient webSocketClient() {
         return new StandardWebSocketClient();
     }
@@ -53,7 +48,7 @@ public class WebSocketClientConfig {
     public WebSocketHandler webSocketHandler(final TradeBotProperties tradeBotProperties,
                                              final ObjectMapper objectMapper,
                                              final TradeService tradeService) {
-        return new JsonWebSocketHandler(tradeBotProperties, objectMapper, tradeService);
+        return new DefaultWebSocketHandler(tradeBotProperties, objectMapper, tradeService);
     }
 
     @Bean

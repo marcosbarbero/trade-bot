@@ -14,22 +14,25 @@
  * limitations under the License.
  */
 
-package com.marcosbarbero.tradebot.service.handler;
+package com.marcosbarbero.tradebot.commons;
 
-import com.marcosbarbero.tradebot.model.dto.Quote;
+import org.springframework.http.HttpStatus;
 
 /**
- * Main interface to handle all the quoting, trading and closing position operations.
+ * Miscellaneous utilities for web applications.
  *
  * @author Marcos Barbero
  */
-public interface TradeHandler {
+public class WebUtils {
 
     /**
-     * Handles the trade operations.
+     * Returns if the given {@link HttpStatus} either in the CLIENT_ERROR or SERVER_ERROR.
      *
-     * @param quote {@link Quote}
-     * @return The current state of {@link Quote}
+     * @param status The {@link HttpStatus}
+     * @return TRUE if the given {@link HttpStatus} either in the CLIENT_ERROR or SERVER_ERROR, FALSE - otherwise
      */
-    Quote handle(Quote quote);
+    public static boolean isHttpError(final HttpStatus status) {
+        return HttpStatus.Series.CLIENT_ERROR.equals(status.series())
+                || HttpStatus.Series.SERVER_ERROR.equals(status.series());
+    }
 }

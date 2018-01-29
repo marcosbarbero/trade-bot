@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 the original author or authors.
+ * Copyright 2012-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,14 @@
 package com.marcosbarbero.tradebot.config.http;
 
 import com.marcosbarbero.tradebot.config.TradeBotProperties;
-import com.marcosbarbero.tradebot.config.http.intercept.HttpRequestInterceptor;
+import com.marcosbarbero.tradebot.config.http.handler.DefaultApiErrorHandler;
+import com.marcosbarbero.tradebot.config.http.intercept.DefaultHttpRequestInterceptor;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
+import static java.util.Collections.singletonList;
 
 /**
  * Http configuration.
@@ -36,7 +37,8 @@ public class HttpConfig {
     @Bean
     public RestTemplate restTemplate(final TradeBotProperties tradeBotProperties) {
         final RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setInterceptors(Collections.singletonList(new HttpRequestInterceptor(tradeBotProperties)));
+        restTemplate.setInterceptors(singletonList(new DefaultHttpRequestInterceptor(tradeBotProperties)));
+        restTemplate.setErrorHandler(new DefaultApiErrorHandler());
         return restTemplate;
     }
 }

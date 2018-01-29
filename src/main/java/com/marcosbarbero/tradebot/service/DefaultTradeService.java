@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 the original author or authors.
+ * Copyright 2012-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,18 @@
 
 package com.marcosbarbero.tradebot.service;
 
-import com.marcosbarbero.tradebot.config.TradeBotProperties;
-import com.marcosbarbero.tradebot.config.websocket.data.ResponsePayload;
+import com.marcosbarbero.tradebot.config.handler.ShutdownHandler;
+import com.marcosbarbero.tradebot.config.websocket.data.QuotePayload;
+import com.marcosbarbero.tradebot.model.dto.Quote;
+import com.marcosbarbero.tradebot.model.dto.State;
+import com.marcosbarbero.tradebot.model.repository.TradeRepository;
 import com.marcosbarbero.tradebot.service.handler.TradeHandler;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.math.BigDecimal;
+import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,31 +42,54 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class DefaultTradeService implements TradeService {
 
-    private final TradeBotProperties tradeBotProperties;
-    private final TradeHandler quoteHandler;
+    private static final int EXIT_CODE = 500;
 
-    // TODO: Remove this throws
+    private final TradeHandler quoteHandler;
+    private final TradeHandler buyOrderHandler;
+    private final TradeHandler sellOrderHandler;
+    private final TradeRepository tradeRepository;
+    private final ShutdownHandler shutdownHandler;
+
     @Override
-    public void doTrade(WebSocketSession session, ResponsePayload payload) throws Exception {
-        log.info("Invalid Payload: {}", payload);
+    public void execute(final WebSocketSession session, final QuotePayload payload, final CountDownLatch latch) {
+        log.debug("WebSocket Payload: {}", payload);
         if (!isValid(payload)) {
             return;
         }
-        doQuote(payload);
-    }
 
-    private void doQuote(ResponsePayload payload) {
-        BigDecimal currentPrice = currentPrice(payload);
-        if (currentPrice.compareTo(this.tradeBotProperties.getBuyPrice()) <= 0) {
-//            this.quote.setCurrentPrice(currentPrice);
+        Optional<Quote> latestState = this.tradeRepository.getLatestState();
+        Quote quote = new Quote(payload);
+
+        if (latestState.isPresent()) {
+            Quote lastQuote = latestState.get();
+            quote.setAction(lastQuote.getAction());
+            quote.setPositionId(lastQuote.getPositionId());
+            quote.setBoughtPrice(lastQuote.getBoughtPrice());
         }
+
+        try {
+            switch (quote.getAction()) {
+                case QUOTE: {
+                    quote = this.quoteHandler.handle(quote);
+                }
+                case BUY: {
+                    quote = this.buyOrderHandler.handle(quote);
+                }
+                case SELL: {
+                    quote = this.sellOrderHandler.handle(quote);
+                }
+            }
+        } finally {
+            if (quote.getState() == State.FINISHED) {
+                this.shutdownHandler.initiateShutdown(EXIT_CODE, session);
+            }
+            this.tradeRepository.save(quote);
+            latch.countDown();
+        }
+
     }
 
-    private BigDecimal currentPrice(ResponsePayload payload) {
-        return new BigDecimal(payload.getBody().get("currentPrice").toString());
-    }
-
-    private boolean isValid(ResponsePayload payload) {
+    private boolean isValid(QuotePayload payload) {
         return payload != null && payload.getT() != null && payload.getT().equals("trading.quote");
     }
 }

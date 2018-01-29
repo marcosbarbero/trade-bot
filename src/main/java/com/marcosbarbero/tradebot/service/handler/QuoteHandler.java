@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 the original author or authors.
+ * Copyright 2012-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,39 @@
 
 package com.marcosbarbero.tradebot.service.handler;
 
-import com.marcosbarbero.tradebot.model.Quote;
+import com.marcosbarbero.tradebot.config.TradeBotProperties;
+import com.marcosbarbero.tradebot.model.dto.Quote;
 
 import org.springframework.stereotype.Component;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import static com.marcosbarbero.tradebot.model.dto.Action.BUY;
+
 /**
+ * Handles the quoting {@link com.marcosbarbero.tradebot.model.dto.Action}.
+ *
  * @author Marcos Barbero
  */
+@Slf4j
 @Component
+@RequiredArgsConstructor
 public class QuoteHandler implements TradeHandler {
+
+    private final TradeBotProperties tradeBotProperties;
+
     @Override
-    public Quote handle(Quote quote) {
-        return null;
+    public Quote handle(final Quote previous) {
+        Quote quote = Quote.newInstance(previous);
+
+        log.info("Quoting - current price: {}", quote.getCurrentPrice());
+
+        if (quote.getCurrentPrice().compareTo(this.tradeBotProperties.getBuyPrice()) <= 0) {
+            quote.setAction(BUY);
+            log.info("QUOTED - current price: {}, buy price: {}",
+                    quote.getCurrentPrice(), this.tradeBotProperties.getBuyPrice());
+        }
+        return quote;
     }
 }

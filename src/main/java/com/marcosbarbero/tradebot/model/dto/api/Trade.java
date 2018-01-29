@@ -14,38 +14,34 @@
  * limitations under the License.
  */
 
-package com.marcosbarbero.tradebot.config.websocket.data;
+package com.marcosbarbero.tradebot.model.dto.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.marcosbarbero.tradebot.model.dto.Action;
 
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.Collections;
-import java.util.Set;
-
+import lombok.Builder;
 import lombok.Getter;
 
-import static java.lang.String.format;
-
 /**
- * Payload structure to subscribe for quote updates.
+ * Immutable POJO representation for the body of a request to make a trade.
  *
  * @author Marcos Barbero
  */
+@Builder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public final class MessagePayload {
-
-    private static final String QUOTE_PREFIX = "trading.product.%s";
+@JsonIgnoreProperties(ignoreUnknown = true)
+public final class Trade {
 
     @Getter
-    private Set<String> subscribeTo;
-
-    public MessagePayload(final String productId) {
-        this.subscribeTo = Collections.emptySet();
-
-        if (StringUtils.isNotBlank(productId)) {
-            this.subscribeTo = Collections.singleton(format(QUOTE_PREFIX, productId));
-        }
-    }
+    private String productId;
+    @Getter
+    private int leverage;
+    @Getter
+    private Action direction;
+    @Getter
+    private Money investingAmount;
+    @Getter
+    private String source;
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 the original author or authors.
+ * Copyright 2012-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,24 +25,34 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Interceptor to add default Http Headers to the {@link org.springframework.web.client.RestTemplate}.
  *
  * @author Marcos Barbero
  */
+@Slf4j
 @RequiredArgsConstructor
-public class HttpRequestInterceptor implements ClientHttpRequestInterceptor {
+public class DefaultHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
     private final TradeBotProperties tradeBotProperties;
 
     @Override
-    public ClientHttpResponse intercept(HttpRequest httpRequest, byte[] body, ClientHttpRequestExecution execution) throws IOException {
+    public ClientHttpResponse intercept(final HttpRequest httpRequest,
+                                        final byte[] body,
+                                        final ClientHttpRequestExecution execution) throws IOException {
         HttpHeaders headers = httpRequest.getHeaders();
         addHeaders(headers);
+
+        if (log.isDebugEnabled()) {
+            log.debug("RequestBody: {}", new String(body, StandardCharsets.UTF_8));
+        }
+
         return execution.execute(httpRequest, body);
     }
 

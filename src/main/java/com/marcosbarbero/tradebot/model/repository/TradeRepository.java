@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 the original author or authors.
+ * Copyright 2012-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,26 @@
  * limitations under the License.
  */
 
-package com.marcosbarbero.tradebot.config.websocket.data;
+package com.marcosbarbero.tradebot.model.repository;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.marcosbarbero.tradebot.model.dto.Quote;
 
-import java.util.Map;
-
-import lombok.Data;
+import java.util.Optional;
 
 /**
  * @author Marcos Barbero
  */
-@Data
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class ResponsePayload {
+public interface TradeRepository {
 
-    private String t;
-    private Map<String, Object> body;
+    /**
+     * Returns the latest saved a {@link Quote}.
+     *
+     * @return Optional of a nullable {@link Quote}
+     */
+    Optional<Quote> getLatestState();
+
+    /**
+     * Saves the given {@link Quote}.
+     */
+    void save(Quote quote);
 }

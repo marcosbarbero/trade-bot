@@ -14,19 +14,29 @@
  * limitations under the License.
  */
 
-package com.marcosbarbero.tradebot;
+package com.marcosbarbero.tradebot.model.dto.api;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-public class TradeBotApplicationTests {
+import java.math.BigDecimal;
 
-	@Test
-	public void contextLoads() {
-	}
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+/**
+ * The money representation for the investments.
+ *
+ * @author Marcos Barbero
+ */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Money {
+    private String currency;
+    private int decimals;
+    private BigDecimal amount;
 }

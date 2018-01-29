@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 the original author or authors.
+ * Copyright 2012-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,12 +53,12 @@ public class TradeBotProperties implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        Assert.notEmpty(headers, "The property 'bux.api.headers' cannot be empty");
-        Assert.notNull(productId, "The property 'bux.api.productId' cannot be null");
-        Assert.notNull(buyPrice, "The property 'bux.api.buyPrice' cannot be null");
-        Assert.notNull(sellPrice.lowerLimit, "The property 'bux.api.sellPrice.lowerLimit' cannot be null");
-        Assert.notNull(sellPrice.upperLimit, "The property 'bux.api.sellPrice.upperLimit' cannot be null");
-        Assert.notNull(endpoints.subscription, "The property 'bux.api.endpoints.subscription' cannot be null");
+        Assert.notEmpty(headers, "The property 'trade.api.headers' cannot be empty");
+        Assert.notNull(productId, "The property 'trade.api.productId' cannot be null");
+        Assert.notNull(buyPrice, "The property 'trade.api.buyPrice' cannot be null");
+        Assert.notNull(sellPrice.lowerLimit, "The property 'trade.api.sellPrice.lowerLimit' cannot be null");
+        Assert.notNull(sellPrice.upperLimit, "The property 'trade.api.sellPrice.upperLimit' cannot be null");
+        Assert.notNull(endpoints.subscription, "The property 'trade.api.endpoints.subscription' cannot be null");
 
         checkTradeRules();
     }
@@ -67,25 +67,25 @@ public class TradeBotProperties implements InitializingBean {
         /*
          Note that for the trading logic to be valid, the relation between the buy price and the lower / upper limit
          should be: lower limit sell price < buy price < upper limit sell price. Think about what it means to close a
-         position with a profit. What should the relation between the current price and the
-         upper limit selling price should be when deciding to close the position or not?
+         position with a profit. What should the relation between the current price and the upper limit selling price
+         should be when deciding to close the position or not?
          */
 
         if (this.sellPrice.lowerLimit.compareTo(this.buyPrice) >= 0) {
-            String message = format("The property 'bux.api.sellPrice.lowerLimit' [%f] needs to be lower than " +
-                    "the value defined in 'bux.api.buyPrice' [%f]", this.sellPrice.lowerLimit, this.buyPrice);
+            String message = format("The property 'trade.api.sellPrice.lowerLimit' [%f] needs to be lower than " +
+                    "the value defined in 'trade.api.buyPrice' [%f]", this.sellPrice.lowerLimit, this.buyPrice);
             throw new IllegalArgumentException(message);
         }
 
         if (this.sellPrice.upperLimit.compareTo(this.buyPrice) <= 0) {
-            String message = format("The property 'bux.api.sellPrice.upperLimit' [%f] needs to be greater than the " +
-                    "value defined in 'bux.api.buyPrice' [%f]", this.sellPrice.upperLimit, this.buyPrice);
+            String message = format("The property 'trade.api.sellPrice.upperLimit' [%f] needs to be greater than the " +
+                    "value defined in 'trade.api.buyPrice' [%f]", this.sellPrice.upperLimit, this.buyPrice);
             throw new IllegalArgumentException(message);
         }
     }
 
     @Data
-    public class SellPrice {
+    public static class SellPrice {
         private BigDecimal upperLimit;
         private BigDecimal lowerLimit;
     }

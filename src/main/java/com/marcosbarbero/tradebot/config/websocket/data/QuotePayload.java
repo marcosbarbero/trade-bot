@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 the original author or authors.
+ * Copyright 2012-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,36 @@
  * limitations under the License.
  */
 
-package com.marcosbarbero.tradebot.model;
+package com.marcosbarbero.tradebot.config.websocket.data;
 
-import org.apache.commons.lang3.ObjectUtils;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.math.BigDecimal;
 
 import lombok.Data;
+import lombok.ToString;
 
 /**
+ * Quote payload from the RTF.
+ *
  * @author Marcos Barbero
  */
 @Data
-public class Quote implements Cloneable {
+@ToString
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class QuotePayload {
 
-    private BigDecimal currentPrice;
+    private String t;
+    private Body body;
 
-    public static Quote newInstance(Quote quote) {
-        return ObjectUtils.clone(quote);
+    @Data
+    @ToString
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public class Body {
+
+        private BigDecimal currentPrice;
     }
 
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
 }

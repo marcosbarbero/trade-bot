@@ -23,14 +23,16 @@ This section describes this project architecture and design.
 [source,yaml]
 ----
 com.marcosbarbero.tradebot // <1>
-com.marcosbarbero.tradeboot.config // <2>
-com.marcosbarbero.tradebot.model // <3>
-com.marcosbarbero.tradebot.service // <4>
+com.marcosbarbero.tradebot.commons // <2>
+com.marcosbarbero.tradeboot.config // <3>
+com.marcosbarbero.tradebot.model // <4>
+com.marcosbarbero.tradebot.service // <5>
 ----
 <1> Root package stores the StartUp class
-<2> Configuration files for the WebSocket connection and HTTP REST calls
-<3> All the data model used in the application such as WebSocket response as well as the REST API response.
-<4> Services and Handlers that execute the trading operations.
+<2> Utility classes
+<3> Configuration files for the WebSocket connection and HTTP REST calls
+<4> All the data model used in the application such as WebSocket response as well as the REST API response and the storage layer.
+<5> Services and Handlers that execute the trading operations.
 
 === Configuration properties
 The current implementation favors convention over configuration and is designed to get you up and running as quickly
@@ -93,10 +95,16 @@ Currently there are two available profiles in the application:
  ** Calls the API in localhost
  ** There's no need to add any argument to run using the default profile
  * Beta
- ** Calls the API in the beta environment provided
- ** To use beta profile add the following command line argument +
+ ** Calls the API in the *beta environment* provided
+ ** To use *beta profile* add the following command line argument +
  
  $ java -jar /path/to/trade-bot.jar --spring.profiles.active=beta
+
+ * Dev
+ ** Calls the API in the *dev environment* provided
+ ** To use *dev profile* add the following command line argument +
+
+ $ java -jar /path/to/trade-bot.jar --spring.profiles.active=dev
 
 [TIP]
 ====
@@ -120,7 +128,7 @@ $ ./mvnw clean package
 $ java -jar target/trade-bot.jar
 ----
 
-IMPORTANT: By default the application will be running in the port 8081.
+IMPORTANT: By default the application will be running in the port *8081*.
 
 If executed as is it will be dependent to the external API to be available in localhost:8080. Check the <<Profiles>> section
 to run it pointing to an external API.
@@ -133,12 +141,15 @@ to the JVM. Full instructions can be found in the Lombok website. The
 sign that you need to do this is a lot of compiler errors to do with
 missing methods and fields.
 
-== Further improvements
+== Roadmap - Further improvements
 Here's some further improvements to be added in this project
 
  * Possibility to configure multiple products to quote, buy and sell
  * WebUI to configure the given properties values instead of a standalone running bot
  * WebSocket notifications feed endpoint to notify when a trade action occurs
+ * Use state machine to control the application flow
+ * Add some Rule Engine such as link:http://drools.jboss.org[Drools] in order to make the trade rules configurable without
+  changing the code
 
 == Contributing
 TradeBot is released under the non-restrictive Apache 2.0 license, and follows a very standard Github development

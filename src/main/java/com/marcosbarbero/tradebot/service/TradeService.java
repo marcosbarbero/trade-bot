@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 the original author or authors.
+ * Copyright 2012-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,11 @@
 
 package com.marcosbarbero.tradebot.service;
 
-import com.marcosbarbero.tradebot.config.websocket.data.ResponsePayload;
+import com.marcosbarbero.tradebot.config.websocket.data.QuotePayload;
 
 import org.springframework.web.socket.WebSocketSession;
+
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Service interface to perform the trade operations.
@@ -27,5 +29,12 @@ import org.springframework.web.socket.WebSocketSession;
  */
 public interface TradeService {
 
-    void doTrade(WebSocketSession session, ResponsePayload payload) throws Exception;
+    /**
+     * Execute the operations to complete the whole trade flow.
+     *
+     * @param session {@link WebSocketSession}
+     * @param payload {@link QuotePayload}
+     * @param latch   {@link CountDownLatch}
+     */
+    void execute(WebSocketSession session, QuotePayload payload, CountDownLatch latch);
 }

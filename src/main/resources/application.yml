@@ -4,19 +4,22 @@ server:
 # TradeBot Configuration
 trade:
   api:
-    env: local
-    domain: http://localhost:8080
+    product-id: sb26493
+    buy-price: 15000.00
+    sell-price:
+      lower-limit: 10000.00
+      upper-limit: 17000.00
     endpoints:
       subscription: ws://localhost:8080/subscriptions/me
       buy-order: http://localhost:8080/core/16/users/me/trades
-      sell-order: http://localhost:8080/core/16/users/me/portfolio/positions/
-    product-id: sb26493
-    buy-price: 11513.6
-    sell-price:
-      lower-limit: 11500.6
-      upper-limit: 11553.6
+      sell-order: http://localhost:8080/core/16/users/me/portfolio/positions/{positionId}
     headers:
       Accept-Language: nl-NL,en;q=0.8
       Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyZWZyZXNoYWJsZSI6ZmFsc2UsInN1YiI6ImJiMGNkYTJiLWExMGUtNGVkMy1hZDVhLTBmODJiNGMxNTJjNCIsImF1ZCI6ImJldGEuZ2V0YnV4LmNvbSIsInNjcCI6WyJhcHA6bG9naW4iLCJydGY6bG9naW4iXSwiZXhwIjoxODIwODQ5Mjc5LCJpYXQiOjE1MDU0ODkyNzksImp0aSI6ImI3MzlmYjgwLTM1NzUtNGIwMS04NzUxLTMzZDFhNGRjOGY5MiIsImNpZCI6Ijg0NzM2MjI5MzkifQ.M5oANIi2nBtSfIfhyUMqJnex-JYg6Sm92KPYaUL9GKg
       Content-Type: application/json
       Accept: application/json
+
+logging:
+  level:
+    org.springframework: ERROR
+    org.apache: ERROR

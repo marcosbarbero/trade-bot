@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 the original author or authors.
+ * Copyright 2012-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,26 +18,31 @@ package com.marcosbarbero.tradebot.config.websocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marcosbarbero.tradebot.config.TradeBotProperties;
+import com.marcosbarbero.tradebot.config.handler.ShutdownHandler;
 import com.marcosbarbero.tradebot.config.websocket.data.MessagePayload;
-import com.marcosbarbero.tradebot.config.websocket.data.ResponsePayload;
+import com.marcosbarbero.tradebot.config.websocket.data.QuotePayload;
 import com.marcosbarbero.tradebot.service.TradeService;
 
-import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 /**
+ * Default handler for the WebSocket connection.
+ *
  * @author Marcos Barbero
  */
 @Slf4j
 @RequiredArgsConstructor
-public class JsonWebSocketHandler extends TextWebSocketHandler {
+public class DefaultWebSocketHandler extends TextWebSocketHandler {
 
     private final TradeBotProperties tradeBotProperties;
 
@@ -45,32 +50,31 @@ public class JsonWebSocketHandler extends TextWebSocketHandler {
 
     private final TradeService tradeService;
 
+    private final CountDownLatch latch = new CountDownLatch(1);
+
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+    public void afterConnectionEstablished(final WebSocketSession session) throws Exception {
         MessagePayload payload = new MessagePayload(this.tradeBotProperties.getProductId());
         TextMessage message = new TextMessage(this.objectMapper.writeValueAsString(payload));
         session.sendMessage(message);
     }
 
     @Override
-    public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        ResponsePayload payload = null;
+    public void handleTextMessage(final WebSocketSession session, final TextMessage message) throws Exception {
         try {
-            payload = this.objectMapper.readValue(message.getPayload(), ResponsePayload.class);
+            synchronized (this.latch) {
+                this.latch.await(1, SECONDS);
+                QuotePayload payload = this.objectMapper.readValue(message.getPayload(), QuotePayload.class);
+                this.tradeService.execute(session, payload, this.latch);
+            }
         } catch (IOException ex) {
             log.error("Error while parsing the message payload: {}", ex);
         }
-        this.tradeService.doTrade(session, payload);
     }
 
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
         log.error("WebSocket connection error: {}", exception);
-    }
-
-    @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        log.error("WebSocket connection error: {}");
     }
 
 }
