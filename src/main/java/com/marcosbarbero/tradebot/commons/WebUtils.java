@@ -23,7 +23,11 @@ import org.springframework.http.HttpStatus;
  *
  * @author Marcos Barbero
  */
-public class WebUtils {
+public final class WebUtils {
+
+    private WebUtils() {
+        // to avoid instantiation
+    }
 
     /**
      * Returns if the given {@link HttpStatus} either in the CLIENT_ERROR or SERVER_ERROR.

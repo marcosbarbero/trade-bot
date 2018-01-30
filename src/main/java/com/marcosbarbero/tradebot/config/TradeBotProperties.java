@@ -24,11 +24,13 @@ import org.springframework.util.Assert;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import static java.lang.String.format;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * Configuration properties wrapper for `trade.api` namespace.
@@ -36,12 +38,17 @@ import static java.lang.String.format;
  * @author Marcos Barbero
  */
 @Data
+@Slf4j
 @ConfigurationProperties(prefix = "trade.api")
 public class TradeBotProperties implements InitializingBean {
 
     private String productId;
 
     private BigDecimal buyPrice;
+
+    private Integer maxRetries = 20;
+
+    private Long interval = SECONDS.toMillis(1);
 
     @NestedConfigurationProperty
     private SellPrice sellPrice = new SellPrice();
@@ -51,6 +58,8 @@ public class TradeBotProperties implements InitializingBean {
 
     private Map<String, String> headers = new HashMap<>();
 
+    private AtomicInteger atomicInteger;
+
     @Override
     public void afterPropertiesSet() throws Exception {
         Assert.notEmpty(headers, "The property 'trade.api.headers' cannot be empty");
@@ -59,6 +68,9 @@ public class TradeBotProperties implements InitializingBean {
         Assert.notNull(sellPrice.lowerLimit, "The property 'trade.api.sellPrice.lowerLimit' cannot be null");
         Assert.notNull(sellPrice.upperLimit, "The property 'trade.api.sellPrice.upperLimit' cannot be null");
         Assert.notNull(endpoints.subscription, "The property 'trade.api.endpoints.subscription' cannot be null");
+        Assert.notNull(maxRetries, "The property 'trade.api.maxRetries' cannot be null");
+
+        atomicInteger = new AtomicInteger(maxRetries);
 
         checkTradeRules();
     }
@@ -82,6 +94,8 @@ public class TradeBotProperties implements InitializingBean {
                     "value defined in 'trade.api.buyPrice' [%f]", this.sellPrice.upperLimit, this.buyPrice);
             throw new IllegalArgumentException(message);
         }
+
+        log.info("PRODUCT ID: {}", this.productId);
     }
 
     @Data

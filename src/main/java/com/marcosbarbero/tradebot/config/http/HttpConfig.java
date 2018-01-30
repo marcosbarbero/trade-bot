@@ -16,12 +16,17 @@
 
 package com.marcosbarbero.tradebot.config.http;
 
+import com.marcosbarbero.tradebot.commons.SSLUtils;
 import com.marcosbarbero.tradebot.config.TradeBotProperties;
 import com.marcosbarbero.tradebot.config.http.handler.DefaultApiErrorHandler;
 import com.marcosbarbero.tradebot.config.http.intercept.DefaultHttpRequestInterceptor;
 
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import static java.util.Collections.singletonList;
@@ -36,9 +41,18 @@ public class HttpConfig {
 
     @Bean
     public RestTemplate restTemplate(final TradeBotProperties tradeBotProperties) {
-        final RestTemplate restTemplate = new RestTemplate();
+        final RestTemplate restTemplate = new RestTemplate(requestFactory());
         restTemplate.setInterceptors(singletonList(new DefaultHttpRequestInterceptor(tradeBotProperties)));
         restTemplate.setErrorHandler(new DefaultApiErrorHandler());
         return restTemplate;
+    }
+
+    private HttpComponentsClientHttpRequestFactory requestFactory() {
+        final SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(SSLUtils.sslContext());
+        final CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(csf).build();
+
+        final HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+        requestFactory.setHttpClient(httpClient);
+        return requestFactory;
     }
 }

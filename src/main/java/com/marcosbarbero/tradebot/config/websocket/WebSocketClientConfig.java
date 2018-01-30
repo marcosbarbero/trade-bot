@@ -17,9 +17,12 @@
 package com.marcosbarbero.tradebot.config.websocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marcosbarbero.tradebot.commons.SSLUtils;
 import com.marcosbarbero.tradebot.config.TradeBotProperties;
+import com.marcosbarbero.tradebot.config.handler.ShutdownHandler;
 import com.marcosbarbero.tradebot.service.TradeService;
 
+import org.apache.tomcat.websocket.Constants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -41,14 +44,17 @@ public class WebSocketClientConfig {
 
     @Bean
     public WebSocketClient webSocketClient() {
-        return new StandardWebSocketClient();
+        final StandardWebSocketClient standardWebSocketClient = new StandardWebSocketClient();
+        standardWebSocketClient.getUserProperties().put(Constants.SSL_CONTEXT_PROPERTY, SSLUtils.sslContext());
+        return standardWebSocketClient;
     }
 
     @Bean
     public WebSocketHandler webSocketHandler(final TradeBotProperties tradeBotProperties,
                                              final ObjectMapper objectMapper,
-                                             final TradeService tradeService) {
-        return new DefaultWebSocketHandler(tradeBotProperties, objectMapper, tradeService);
+                                             final TradeService tradeService,
+                                             final ShutdownHandler shutdownHandler) {
+        return new DefaultWebSocketHandler(tradeBotProperties, objectMapper, tradeService, shutdownHandler);
     }
 
     @Bean

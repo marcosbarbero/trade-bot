@@ -42,7 +42,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class DefaultTradeService implements TradeService {
 
-    private static final int EXIT_CODE = 500;
+    private static final int EXIT_CODE = 200;
 
     private final TradeHandler quoteHandler;
     private final TradeHandler buyOrderHandler;

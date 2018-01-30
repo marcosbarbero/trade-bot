@@ -25,8 +25,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import static com.marcosbarbero.tradebot.commons.WebUtils.isHttpError;
@@ -40,11 +40,20 @@ import static org.springframework.http.HttpMethod.DELETE;
  */
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class SellOrderHandler extends AbstractTradeHandler implements TradeHandler {
 
     private final RestTemplate restTemplate;
     private final TradeBotProperties tradeBotProperties;
+
+    private AtomicInteger retry;
+
+    private AtomicInteger attempts = new AtomicInteger(0);
+
+    public SellOrderHandler(RestTemplate restTemplate, TradeBotProperties tradeBotProperties) {
+        this.restTemplate = restTemplate;
+        this.tradeBotProperties = tradeBotProperties;
+        this.retry = new AtomicInteger(this.tradeBotProperties.getMaxRetries());
+    }
 
     @Override
     public Quote handle(final Quote previous) {
@@ -58,8 +67,12 @@ public class SellOrderHandler extends AbstractTradeHandler implements TradeHandl
 
         if (!isHttpError(response.getStatusCode())) {
             quote.setState(State.FINISHED);
-            log.info("Position closed! Bought price {}, sold price: {}",
-                    quote.getBoughtPrice(), quote.getCurrentPrice());
+            BigDecimal currentPrice = quote.getCurrentPrice();
+            BigDecimal boughtPrice = quote.getBoughtPrice();
+
+            String profitOrLoss = boughtPrice.compareTo(currentPrice) < 0 ? "PROFIT :)" : "LOSS :(";
+            log.info("POSITION CLOSED With {} !! Bought price {}, sold price: {}",
+                    profitOrLoss, boughtPrice, currentPrice);
         }
 
         return quote;
@@ -73,18 +86,32 @@ public class SellOrderHandler extends AbstractTradeHandler implements TradeHandl
         BigDecimal currentPrice = quote.getCurrentPrice();
         BigDecimal boughtPrice = quote.getBoughtPrice();
 
+        log.info("Attempt n. {} - current price: {}", this.attempts.incrementAndGet(), currentPrice);
+
         log.debug("Buy price: {}, Lower sell price: {}, Upper sell price: {}, Current price: {}, Bought Price: {}",
                 buyPrice, lowerLimit, upperLimit, currentPrice, boughtPrice);
 
-        if (currentPrice.compareTo(buyPrice) < 0 && currentPrice.compareTo(boughtPrice) <= 0) {
-            return false;
-        }
+        AtomicInteger internalMaxRetries = this.tradeBotProperties.getAtomicInteger();
 
-        if (currentPrice.compareTo(lowerLimit) <= 0) {
-            return false;
-        }
+        if (internalMaxRetries.getAndDecrement() > 0) {
+            return currentPrice.compareTo(upperLimit) >= 0;
+        } else {
+            int remainingAttempts = this.retry.decrementAndGet();
 
-        return upperLimit.compareTo(currentPrice) >= 0;
+            if (currentPrice.compareTo(buyPrice) >= 0) {
+                return true;
+            }
+
+            if (currentPrice.compareTo(boughtPrice) >= 0) {
+                return true;
+            }
+
+            if (remainingAttempts == 0 && currentPrice.compareTo(lowerLimit) > 0) {
+                return true;
+            }
+
+            return remainingAttempts == 0;
+        }
     }
 
     @Override

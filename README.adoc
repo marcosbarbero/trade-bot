@@ -43,29 +43,33 @@ as possible
 ----
 trade:
   api:
+    product-id: sb26493  // <1>
+    buy-price: 11513.6  // <2>
+    max-retries: 20 // <3>
+    interval: 1000 // <4>
     endpoints:
-      subscription: ws://localhost:8080/subscriptions/me  // <1>
-      buy-order: http://localhost:8080/core/16/users/me/trades  // <2>
-      sell-order: http://localhost:8080/core/16/users/me/portfolio/positions/{positionId}  // <3>
-    product-id: sb26493  // <4>
-    buy-price: 11513.6  // <5>
+      subscription: ws://localhost:8080/subscriptions/me  // <5>
+      buy-order: http://localhost:8080/core/16/users/me/trades  // <6>
+      sell-order: http://localhost:8080/core/16/users/me/portfolio/positions/{positionId}  // <7>
     sell-price:
-      lower-limit: 11500.6  // <6>
-      upper-limit: 11553.6  // <7>
-    headers:  // <8>
+      lower-limit: 11500.6  // <8>
+      upper-limit: 11553.6  // <9>
+    headers:  // <10>
       Accept-Language: nl-NL,en;q=0.8
       Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyZWZyZXNoYWJsZSI6ZmFsc2UsInN1YiI6ImJiMGNkYTJiLWExMGUtNGVkMy1hZDVhLTBmODJiNGMxNTJjNCIsImF1ZCI6ImJldGEuZ2V0YnV4LmNvbSIsInNjcCI6WyJhcHA6bG9naW4iLCJydGY6bG9naW4iXSwiZXhwIjoxODIwODQ5Mjc5LCJpYXQiOjE1MDU0ODkyNzksImp0aSI6ImI3MzlmYjgwLTM1NzUtNGIwMS04NzUxLTMzZDFhNGRjOGY5MiIsImNpZCI6Ijg0NzM2MjI5MzkifQ.M5oANIi2nBtSfIfhyUMqJnex-JYg6Sm92KPYaUL9GKg
       Content-Type: application/json
       Accept: application/json
 ----
-<1> WebSocket real-time feed subscription endpoint
-<2> The endpoint to buy order (Make a Trade)
-<3> The endpoint to sell order (Close Position)
-<4> The product id to quote
-<5> The buy price
-<6> The lower limit price to sell
-<7> The upper limit price to sell
-<8> Map containing default HTTP Headers to be sent in all requests
+<1> The product id to quote
+<2> The buy price
+<3> Max retries to close a position making a profit, default value 20
+<4> The WebSocket feed connection interval in milliseconds, default value 1000
+<5> WebSocket real-time feed subscription endpoint
+<6> The endpoint to buy order (Make a Trade)
+<7> The endpoint to sell order (Close Position)
+<8> The lower limit price to sell
+<9> The upper limit price to sell
+<10> Map containing default HTTP Headers to be sent in all requests
 
 ==== Overriding default configuration properties
 This section describes how to override this application properties.
@@ -150,7 +154,7 @@ Here's some further improvements to be added in this project
  * Use state machine to control the application flow
  * Add some Rule Engine such as link:http://drools.jboss.org[Drools] in order to make the trade rules configurable without
   changing the code
- * Add max-retry configuration property to improve the trade rules
+ * Add max-retries configuration property to improve the trade rules
 
 == Contributing
 TradeBot is released under the non-restrictive Apache 2.0 license, and follows a very standard Github development

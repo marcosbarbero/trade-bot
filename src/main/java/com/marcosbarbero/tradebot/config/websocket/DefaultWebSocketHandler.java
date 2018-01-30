@@ -33,7 +33,7 @@ import java.util.concurrent.CountDownLatch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 /**
  * Default handler for the WebSocket connection.
@@ -44,11 +44,15 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 @RequiredArgsConstructor
 public class DefaultWebSocketHandler extends TextWebSocketHandler {
 
+    private static final int EXIT_CODE = 500;
+
     private final TradeBotProperties tradeBotProperties;
 
     private final ObjectMapper objectMapper;
 
     private final TradeService tradeService;
+
+    private final ShutdownHandler shutdownHandler;
 
     private final CountDownLatch latch = new CountDownLatch(1);
 
@@ -63,8 +67,9 @@ public class DefaultWebSocketHandler extends TextWebSocketHandler {
     public void handleTextMessage(final WebSocketSession session, final TextMessage message) throws Exception {
         try {
             synchronized (this.latch) {
-                this.latch.await(1, SECONDS);
+                this.latch.await(this.tradeBotProperties.getInterval(), MILLISECONDS);
                 QuotePayload payload = this.objectMapper.readValue(message.getPayload(), QuotePayload.class);
+                validateConnection(message, session);
                 this.tradeService.execute(session, payload, this.latch);
             }
         } catch (IOException ex) {
@@ -73,8 +78,15 @@ public class DefaultWebSocketHandler extends TextWebSocketHandler {
     }
 
     @Override
-    public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
+    public void handleTransportError(final WebSocketSession session, final Throwable exception) throws Exception {
         log.error("WebSocket connection error: {}", exception);
+    }
+
+    private void validateConnection(TextMessage textMessage, WebSocketSession session) {
+        if (textMessage.getPayload().contains("connect.failed")) {
+            log.error("An error occurred to connect to the WebSocket: \n {}", textMessage.getPayload());
+            this.shutdownHandler.initiateShutdown(EXIT_CODE, session);
+        }
     }
 
 }
