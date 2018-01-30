@@ -21,8 +21,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.io.IOException;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,14 +38,8 @@ public class ShutdownHandler {
      * Closes the given {@link WebSocketSession} and exit the application with the given returnCode.
      *
      * @param returnCode Any int value
-     * @param session The current {@link WebSocketSession}
      */
-    public void initiateShutdown(final int returnCode, final WebSocketSession session) {
-        try {
-            session.close();
-        } catch (IOException ex) {
-            log.warn("Error occurred while closing the WebSocket session.", ex);
-        }
+    public void initiateShutdown(final int returnCode) {
         SpringApplication.exit(applicationContext, () -> returnCode);
     }
 }

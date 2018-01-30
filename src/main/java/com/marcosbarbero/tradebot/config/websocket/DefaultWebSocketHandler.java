@@ -23,6 +23,7 @@ import com.marcosbarbero.tradebot.config.websocket.data.MessagePayload;
 import com.marcosbarbero.tradebot.config.websocket.data.QuotePayload;
 import com.marcosbarbero.tradebot.service.TradeService;
 
+import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
@@ -78,14 +79,19 @@ public class DefaultWebSocketHandler extends TextWebSocketHandler {
     }
 
     @Override
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        this.shutdownHandler.initiateShutdown(EXIT_CODE);
+    }
+
+    @Override
     public void handleTransportError(final WebSocketSession session, final Throwable exception) throws Exception {
         log.error("WebSocket connection error: {}", exception);
     }
 
-    private void validateConnection(TextMessage textMessage, WebSocketSession session) {
+    private void validateConnection(TextMessage textMessage, WebSocketSession session) throws IOException {
         if (textMessage.getPayload().contains("connect.failed")) {
             log.error("An error occurred to connect to the WebSocket: \n {}", textMessage.getPayload());
-            this.shutdownHandler.initiateShutdown(EXIT_CODE, session);
+            session.close();
         }
     }
 

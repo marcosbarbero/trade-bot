@@ -16,7 +16,6 @@
 
 package com.marcosbarbero.tradebot.service;
 
-import com.marcosbarbero.tradebot.config.handler.ShutdownHandler;
 import com.marcosbarbero.tradebot.config.websocket.data.QuotePayload;
 import com.marcosbarbero.tradebot.model.dto.Quote;
 import com.marcosbarbero.tradebot.model.dto.State;
@@ -26,6 +25,7 @@ import com.marcosbarbero.tradebot.service.handler.TradeHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 
@@ -42,13 +42,10 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class DefaultTradeService implements TradeService {
 
-    private static final int EXIT_CODE = 200;
-
     private final TradeHandler quoteHandler;
     private final TradeHandler buyOrderHandler;
     private final TradeHandler sellOrderHandler;
     private final TradeRepository tradeRepository;
-    private final ShutdownHandler shutdownHandler;
 
     @Override
     public void execute(final WebSocketSession session, final QuotePayload payload, final CountDownLatch latch) {
@@ -81,7 +78,11 @@ public class DefaultTradeService implements TradeService {
             }
         } finally {
             if (quote.getState() == State.FINISHED) {
-                this.shutdownHandler.initiateShutdown(EXIT_CODE, session);
+                try {
+                    session.close();
+                } catch (IOException e) {
+                    log.error("An error occurred while closing the WebSocketSession.", e);
+                }
             }
             this.tradeRepository.save(quote);
             latch.countDown();
