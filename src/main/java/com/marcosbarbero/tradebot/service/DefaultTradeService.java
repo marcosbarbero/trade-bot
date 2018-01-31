@@ -78,16 +78,20 @@ public class DefaultTradeService implements TradeService {
             }
         } finally {
             if (quote.getState() == State.FINISHED) {
-                try {
-                    session.close();
-                } catch (IOException e) {
-                    log.error("An error occurred while closing the WebSocketSession.", e);
-                }
+                close(session);
             }
             this.tradeRepository.save(quote);
             latch.countDown();
         }
 
+    }
+
+    private void close(WebSocketSession session) {
+        try {
+            session.close();
+        } catch (IOException e) {
+            log.error("An error occurred while closing the WebSocketSession.", e);
+        }
     }
 
     private boolean isValid(QuotePayload payload) {

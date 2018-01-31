@@ -50,6 +50,8 @@ public class TradeBotProperties implements InitializingBean {
 
     private Long interval = SECONDS.toMillis(1);
 
+    private boolean autoConnect = true;
+
     @NestedConfigurationProperty
     private SellPrice sellPrice = new SellPrice();
 
@@ -58,7 +60,7 @@ public class TradeBotProperties implements InitializingBean {
 
     private Map<String, String> headers = new HashMap<>();
 
-    private AtomicInteger atomicInteger;
+    private AtomicInteger atomicMaxRetries;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -70,7 +72,7 @@ public class TradeBotProperties implements InitializingBean {
         Assert.notNull(endpoints.subscription, "The property 'trade.api.endpoints.subscription' cannot be null");
         Assert.notNull(maxRetries, "The property 'trade.api.maxRetries' cannot be null");
 
-        atomicInteger = new AtomicInteger(maxRetries);
+        atomicMaxRetries = new AtomicInteger(maxRetries);
 
         checkTradeRules();
     }

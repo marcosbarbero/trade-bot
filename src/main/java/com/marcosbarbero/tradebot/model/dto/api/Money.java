@@ -31,7 +31,6 @@ import lombok.NoArgsConstructor;
  * @author Marcos Barbero
  */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)

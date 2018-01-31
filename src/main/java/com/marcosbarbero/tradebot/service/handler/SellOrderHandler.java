@@ -49,7 +49,7 @@ public class SellOrderHandler extends AbstractTradeHandler implements TradeHandl
 
     private AtomicInteger attempts = new AtomicInteger(0);
 
-    public SellOrderHandler(RestTemplate restTemplate, TradeBotProperties tradeBotProperties) {
+    public SellOrderHandler(final RestTemplate restTemplate, final TradeBotProperties tradeBotProperties) {
         this.restTemplate = restTemplate;
         this.tradeBotProperties = tradeBotProperties;
         this.retry = new AtomicInteger(this.tradeBotProperties.getMaxRetries());
@@ -91,9 +91,9 @@ public class SellOrderHandler extends AbstractTradeHandler implements TradeHandl
         log.debug("Buy price: {}, Lower sell price: {}, Upper sell price: {}, Current price: {}, Bought Price: {}",
                 buyPrice, lowerLimit, upperLimit, currentPrice, boughtPrice);
 
-        AtomicInteger internalMaxRetries = this.tradeBotProperties.getAtomicInteger();
+        AtomicInteger atomicMaxRetries = this.tradeBotProperties.getAtomicMaxRetries();
 
-        if (internalMaxRetries.getAndDecrement() > 0) {
+        if (atomicMaxRetries.getAndDecrement() > 0) {
             return currentPrice.compareTo(upperLimit) >= 0;
         } else {
             int remainingAttempts = this.retry.decrementAndGet();

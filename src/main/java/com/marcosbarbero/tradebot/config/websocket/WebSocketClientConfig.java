@@ -64,7 +64,7 @@ public class WebSocketClientConfig {
         final WebSocketConnectionManager connectionManager = new WebSocketConnectionManager(webSocketClient,
                 webSocketHandler, tradeBotProperties.getEndpoints().getSubscription());
         connectionManager.setHeaders(headers(tradeBotProperties));
-        connectionManager.setAutoStartup(true);
+        connectionManager.setAutoStartup(tradeBotProperties.isAutoConnect());
         return connectionManager;
     }
 
