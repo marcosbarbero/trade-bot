@@ -16,7 +16,7 @@ This section describes this project architecture and design.
  * link:https://projects.spring.io/spring-boot/[Spring Boot]
  * link:http://projectlombok.org/features/index.html[Project Lombok]
  * link:https://maven.apache.org[Maven]
- * link:https://github.com/jacoco/jacoco[Java Code Coverage - JaCoCo]
+ * link:https://github.com/jacoco/jacoco[Java Code Coverage (aka JaCoCo)]
 
 === Packages
 
