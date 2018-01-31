@@ -53,7 +53,7 @@ public class SellOrderHandlerTest {
     private TradeBotProperties properties;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.properties = new TradeBotProperties();
         this.properties.getEndpoints().setSellOrder("http://localhost:8080/close/position/endpoint");
         this.properties.setAtomicMaxRetries(new AtomicInteger(1));
@@ -65,7 +65,7 @@ public class SellOrderHandlerTest {
     }
 
     @Test
-    public void handleSuccessRequestMakingProfit() {
+    public void handleSuccessRequestMakingProfitOnUpperLimit() {
         Quote quote = quote();
         quote.setPositionId(UUID.randomUUID().toString());
         quote.setBoughtPrice(quote.getCurrentPrice().subtract(BigDecimal.valueOf(5)));
@@ -80,23 +80,65 @@ public class SellOrderHandlerTest {
     }
 
     @Test
+    public void handleSuccessRequestMakingProfitOnBuyPrice() {
+        modifyRetries();
+        Quote quote = quote();
+        quote.setPositionId(UUID.randomUUID().toString());
+        quote.setBoughtPrice(quote.getCurrentPrice().subtract(BigDecimal.valueOf(5)));
+
+        ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.OK);
+        when(this.restTemplate.exchange(anyString(), any(), any(), eq(String.class), anyString())).thenReturn(responseEntity);
+
+        assertEquals(State.RUNNING, quote.getState());
+
+        Quote result = this.tradeHandler.handle(quote);
+        assertEquals(State.FINISHED, result.getState());
+    }
+
+    @Test
+    public void handleSuccessRequestMakingProfitOnBoughtPrice() {
+        modifyRetries();
+        Quote quote = quote();
+        quote.setCurrentPrice(this.properties.getBuyPrice().subtract(BigDecimal.valueOf(5)));
+        quote.setPositionId(UUID.randomUUID().toString());
+        quote.setBoughtPrice(quote.getCurrentPrice().subtract(BigDecimal.valueOf(5)));
+
+        ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.OK);
+        when(this.restTemplate.exchange(anyString(), any(), any(), eq(String.class), anyString())).thenReturn(responseEntity);
+
+        assertEquals(State.RUNNING, quote.getState());
+
+        Quote result = this.tradeHandler.handle(quote);
+        assertEquals(State.FINISHED, result.getState());
+    }
+
+
+    @Test
     public void endpoint() {
         notNull(this.tradeHandler.endpoint(), "Sell endpoint shouldn't be null.");
     }
 
     @Test
-    public void handleSuccessRequestMakingLoss() {
-        Field atomicMaxRetries = ReflectionUtils.findField(TradeBotProperties.class, "atomicMaxRetries");
-        ReflectionUtils.makeAccessible(atomicMaxRetries);
-        ReflectionUtils.setField(atomicMaxRetries, this.properties, new AtomicInteger(0));
+    public void handleSuccessRequestMakingProfitOnLowerLimit() {
+        modifyRetries();
 
-        Field tradeBotProperties = ReflectionUtils.findField(SellOrderHandler.class, "tradeBotProperties");
-        ReflectionUtils.makeAccessible(tradeBotProperties);
-        ReflectionUtils.setField(tradeBotProperties, this.tradeHandler, this.properties);
+        Quote quote = quote();
+        quote.setPositionId(UUID.randomUUID().toString());
+        quote.setCurrentPrice(this.properties.getSellPrice().getLowerLimit());
+        quote.setBoughtPrice(quote.getCurrentPrice().add(BigDecimal.valueOf(5)));
 
-        Field retry = ReflectionUtils.findField(SellOrderHandler.class, "retry");
-        ReflectionUtils.makeAccessible(retry);
-        ReflectionUtils.setField(retry, this.tradeHandler, new AtomicInteger(1));
+        ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.OK);
+        when(this.restTemplate.exchange(anyString(), any(), any(), eq(String.class), anyString())).thenReturn(responseEntity);
+
+        assertEquals(State.RUNNING, quote.getState());
+
+        Quote result = this.tradeHandler.handle(quote);
+        assertEquals(State.FINISHED, result.getState());
+    }
+
+    @Test
+    public void handleSuccessRequestMakingLossAfterAllRetries() {
+        modifyRetries();
 
         Quote quote = quote();
         quote.setPositionId(UUID.randomUUID().toString());
@@ -110,5 +152,19 @@ public class SellOrderHandlerTest {
 
         Quote result = this.tradeHandler.handle(quote);
         assertEquals(State.FINISHED, result.getState());
+    }
+
+    private void modifyRetries() {
+        Field atomicMaxRetries = ReflectionUtils.findField(TradeBotProperties.class, "atomicMaxRetries");
+        ReflectionUtils.makeAccessible(atomicMaxRetries);
+        ReflectionUtils.setField(atomicMaxRetries, this.properties, new AtomicInteger(0));
+
+        Field tradeBotProperties = ReflectionUtils.findField(SellOrderHandler.class, "tradeBotProperties");
+        ReflectionUtils.makeAccessible(tradeBotProperties);
+        ReflectionUtils.setField(tradeBotProperties, this.tradeHandler, this.properties);
+
+        Field retry = ReflectionUtils.findField(SellOrderHandler.class, "retry");
+        ReflectionUtils.makeAccessible(retry);
+        ReflectionUtils.setField(retry, this.tradeHandler, new AtomicInteger(1));
     }
 }

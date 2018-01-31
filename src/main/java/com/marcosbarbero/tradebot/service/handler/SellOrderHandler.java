@@ -98,15 +98,18 @@ public class SellOrderHandler extends AbstractTradeHandler implements TradeHandl
         } else {
             int remainingAttempts = this.retry.decrementAndGet();
 
+            // profit
             if (currentPrice.compareTo(buyPrice) >= 0) {
                 return true;
             }
 
+            // profit
             if (currentPrice.compareTo(boughtPrice) >= 0) {
                 return true;
             }
 
-            if (remainingAttempts == 0 && currentPrice.compareTo(lowerLimit) > 0) {
+            // it can be either a loss or a profit, it depends on the boughtPrice.
+            if (remainingAttempts == 0 && currentPrice.compareTo(lowerLimit) >= 0) {
                 return true;
             }
 
