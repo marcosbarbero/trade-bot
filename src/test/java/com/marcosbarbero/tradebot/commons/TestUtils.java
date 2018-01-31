@@ -16,6 +16,7 @@
 
 package com.marcosbarbero.tradebot.commons;
 
+import com.marcosbarbero.tradebot.config.websocket.data.QuotePayload;
 import com.marcosbarbero.tradebot.model.dto.Action;
 import com.marcosbarbero.tradebot.model.dto.Quote;
 import com.marcosbarbero.tradebot.model.dto.api.ApiResponse;
@@ -51,5 +52,13 @@ public final class TestUtils {
         double currentPrice = (price != null && price.length > 0) ? price[0] : 200.00;
         quote.setCurrentPrice(BigDecimal.valueOf(currentPrice));
         return quote;
+    }
+
+    public static QuotePayload quotePayload(double... price) {
+        double currentPrice = (price != null && price.length > 0) ? price[0] : 200.00;
+        QuotePayload quotePayload = new QuotePayload();
+        quotePayload.setT("trading.quote");
+        quotePayload.setBody(new QuotePayload.Body(BigDecimal.valueOf(currentPrice)));
+        return quotePayload;
     }
 }

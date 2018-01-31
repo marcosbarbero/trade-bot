@@ -21,7 +21,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.math.BigDecimal;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
@@ -40,8 +42,10 @@ public class QuotePayload {
 
     @Data
     @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public class Body {
+    public static class Body {
 
         private BigDecimal currentPrice;
     }
