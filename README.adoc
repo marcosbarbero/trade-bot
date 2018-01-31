@@ -16,6 +16,7 @@ This section describes this project architecture and design.
  * link:https://projects.spring.io/spring-boot/[Spring Boot]
  * link:http://projectlombok.org/features/index.html[Project Lombok]
  * link:https://maven.apache.org[Maven]
+ * link:https://github.com/jacoco/jacoco[Java Code Coverage - JaCoCo]
 
 === Packages
 
@@ -137,6 +138,20 @@ IMPORTANT: By default the application will be running in the port *8081*.
 If executed as is it will be dependent to the external API to be available in localhost:8080. Check the <<Profiles>> section
 to run it pointing to an external API.
 
+== Code coverage
+This project uses link:https://github.com/jacoco/jacoco[JaCoCo].
+
+The actual configuration excludes irrelevant packages from the coverage scan, those excluded packages are related to
+*Java Configuration* files and *POJOs*.
+
+The JaCoco report can be found in the following path:
+
+.JaCoCo report
+[source,bash]
+----
+$ ./target/site/jacoco/site.html
+----
+
 === Adding Project Lombok Agent
 This project uses link:http://projectlombok.org/features/index.html[Project Lombok]
 to generate getters and setters etc. Compiling from the command line this
@@ -145,7 +160,7 @@ to the JVM. Full instructions can be found in the Lombok website. The
 sign that you need to do this is a lot of compiler errors to do with
 missing methods and fields.
 
-== Roadmap - Further improvements
+== Roadmap - Further Improvements
 Here's some further improvements to be added in this project
 
  * Possibility to configure multiple products to quote, buy and sell
@@ -155,6 +170,10 @@ Here's some further improvements to be added in this project
  * Add some Rule Engine such as link:http://drools.jboss.org[Drools] in order to make the trade rules configurable without
   changing the code
  * Error handling for the API calls
+
+== Known issues
+
+ * Currently it's not possible to execute the application using *dev profile*, it fails on *Authentication*.
 
 == Contributing
 TradeBot is released under the non-restrictive Apache 2.0 license, and follows a very standard Github development
