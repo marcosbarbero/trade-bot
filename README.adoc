@@ -154,6 +154,7 @@ Here's some further improvements to be added in this project
  * Use state machine to control the application flow
  * Add some Rule Engine such as link:http://drools.jboss.org[Drools] in order to make the trade rules configurable without
   changing the code
+ * Error handling for the API calls
 
 == Contributing
 TradeBot is released under the non-restrictive Apache 2.0 license, and follows a very standard Github development
