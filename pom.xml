@@ -78,6 +78,13 @@
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
                 <version>4.3.0</version>
+                <configuration>
+                    <jacocoReports>
+                        <jacocoReport>
+                            target/site/jacoco/jacoco.xml
+                        </jacocoReport>
+                    </jacocoReports>
+                </configuration>
             </plugin>
 
             <plugin>
@@ -85,7 +92,6 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.0</version>
                 <configuration>
-                    <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
                     <excludes>
                         <exclude>com/marcosbarbero/tradebot/config/**/*</exclude>
                         <exclude>com/marcosbarbero/tradebot/model/dto/**/*</exclude>
