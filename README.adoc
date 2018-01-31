@@ -1,4 +1,4 @@
-= Trade Bot https://travis-ci.org/marcosbarbero/trade-bot[image:https://travis-ci.org/marcosbarbero/trade-bot.svg?branch=master[Build Status]]
+= Trade Bot https://travis-ci.org/marcosbarbero/trade-bot[image:https://travis-ci.org/marcosbarbero/trade-bot.svg?branch=master[Build Status]] https://coveralls.io/github/marcosbarbero/trade-bot?branch=master&service=github[image:https://coveralls.io/repos/github/marcosbarbero/trade-bot/badge.svg?branch=master[Coverage Status]]
 Marcos Barbero <marcos.hgb@gmail.com>
 :toc:
 :summary: Simple bot implementation to perform some trading operations.
