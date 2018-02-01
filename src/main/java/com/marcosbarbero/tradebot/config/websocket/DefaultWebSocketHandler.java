@@ -79,7 +79,7 @@ public class DefaultWebSocketHandler extends TextWebSocketHandler {
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+    public void afterConnectionClosed(final WebSocketSession session, final CloseStatus status) throws Exception {
         this.shutdownHandler.initiateShutdown(EXIT_CODE);
     }
 
