@@ -70,7 +70,7 @@ public class SellOrderHandler extends AbstractTradeHandler implements TradeHandl
             BigDecimal currentPrice = quote.getCurrentPrice();
             BigDecimal boughtPrice = quote.getBoughtPrice();
 
-            String profitOrLoss = boughtPrice.compareTo(currentPrice) < 0 ? "PROFIT :)" : "LOSS :(";
+            String profitOrLoss = boughtPrice.compareTo(currentPrice) <= 0 ? "PROFIT :)" : "LOSS :(";
             log.info("POSITION CLOSED With {} !! Bought price {}, sold price: {}",
                     profitOrLoss, boughtPrice, currentPrice);
         }
