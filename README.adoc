@@ -83,7 +83,7 @@ to override its properties in few ways.
  $ java -jar /path/to/trade-bot.jar --trade.api.product-id=$productId --trade.api.buy-price=$buyPrice --trade.api.sell-price.lower-limit=$lowerLimit --trade.api.sell-price.upper-limit=$upperLimit
  
  * Editing application properties file +
- It's possible to override the properties by editing the link:src/main/resources/application-yml[application.yml] file.
+ It's possible to override the properties by editing the link:src/main/resources/application.yml[application.yml] file.
 
 IMPORTANT: After editing the properties file it's necessary to <<Build & Run,build>> the application before run it.
 
