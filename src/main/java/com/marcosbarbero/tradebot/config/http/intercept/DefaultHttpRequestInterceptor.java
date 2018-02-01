@@ -31,6 +31,8 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * Interceptor to add default Http Headers to the {@link org.springframework.web.client.RestTemplate}.
  *
@@ -50,7 +52,7 @@ public class DefaultHttpRequestInterceptor implements ClientHttpRequestIntercept
         addHeaders(headers);
 
         if (log.isDebugEnabled()) {
-            log.debug("RequestBody: {}", new String(body, StandardCharsets.UTF_8));
+            log.debug("RequestBody: {}", new String(body, UTF_8));
         }
 
         return execution.execute(httpRequest, body);

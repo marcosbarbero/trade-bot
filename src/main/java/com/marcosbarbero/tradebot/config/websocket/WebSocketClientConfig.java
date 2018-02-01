@@ -34,6 +34,8 @@ import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 
 import java.util.Map;
 
+import static org.apache.tomcat.websocket.Constants.SSL_CONTEXT_PROPERTY;
+
 /**
  * WebSocket client configuration.
  *
@@ -45,7 +47,7 @@ public class WebSocketClientConfig {
     @Bean
     public WebSocketClient webSocketClient() {
         final StandardWebSocketClient standardWebSocketClient = new StandardWebSocketClient();
-        standardWebSocketClient.getUserProperties().put(Constants.SSL_CONTEXT_PROPERTY, SSLUtils.sslContext());
+        standardWebSocketClient.getUserProperties().put(SSL_CONTEXT_PROPERTY, SSLUtils.sslContext());
         return standardWebSocketClient;
     }
 
@@ -68,7 +70,7 @@ public class WebSocketClientConfig {
         return connectionManager;
     }
 
-    private HttpHeaders headers(final TradeBotProperties tradeBotProperties) {
+    private HttpHeaders headers(TradeBotProperties tradeBotProperties) {
         final HttpHeaders httpHeaders = new WebSocketHttpHeaders();
         for (Map.Entry<String, String> header : tradeBotProperties.getHeaders().entrySet()) {
             httpHeaders.add(header.getKey(), header.getValue());
