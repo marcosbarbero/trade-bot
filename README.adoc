@@ -165,7 +165,7 @@ The JaCoco report can be found in the following path:
 .JaCoCo report
 [source,bash]
 ----
-$ ./target/site/jacoco/site.html
+$ ./target/site/jacoco/index.html
 ----
 
 == Roadmap - Further Improvements
